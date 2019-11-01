@@ -1,6 +1,7 @@
 // npm packages
 const inquirer = require('inquirer')
 const mysql = require('mysql2')
+const table = require('table')
 
 // connection to database
 const connection =
@@ -76,7 +77,46 @@ function leaderboard() {
     if (e) {
       console.log(e)
     }
-    console.log(r)
+
+    const data = r.map(({ name, costume, votes }) => [name, costume, votes])
+    const options = {
+      columns: {
+        0: {
+          width: 15
+        },
+        1: {
+          width: 25
+        },
+        2: {
+          width: 2
+        }
+      },
+      border: {
+        topBody: `─`,
+        topJoin: `┬`,
+        topLeft: `┌`,
+        topRight: `┐`,
+
+        bottomBody: `─`,
+        bottomJoin: `┴`,
+        bottomLeft: `└`,
+        bottomRight: `┘`,
+
+        bodyLeft: `│`,
+        bodyRight: `│`,
+        bodyJoin: `│`,
+
+        joinBody: `─`,
+        joinLeft: `├`,
+        joinRight: `┤`,
+        joinJoin: `┼`
+      }
+    }
+
+    output = table.table(data, options);
+
+    console.log(output);
+
     process.exit()
   })
 }
