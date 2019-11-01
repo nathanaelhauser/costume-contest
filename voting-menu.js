@@ -1,3 +1,5 @@
+const 
+
 const votingMenu = _ => {
   inquirer.prompt({
     type: 'input',
@@ -10,9 +12,16 @@ const votingMenu = _ => {
         if (e) {
           console.log(e)
         }
-        console.log(data)
+        if (data.some(contestant => contestant.name === answer.voter)) {
+
+        } else {
+          console.log(`Can't vote until you enter the competition.`)
+          start()
+        }
       })
 
     })
     .catch(e => console.log(e))
 }
+
+
