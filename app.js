@@ -9,6 +9,7 @@ mysql.createConnection({
     database: 'costumes_db'
 })
 
+// creating connection to db and starting in console
 connection.connect(err => {
     if(err) throw err
 
@@ -16,6 +17,7 @@ connection.connect(err => {
 
 })
 
+// start function
 function start () {
     inquirer.prompt({
         name: 'costumeContest',
@@ -36,12 +38,13 @@ function start () {
     })
 }
 
-function leaderboard () {
-    connection.query('SELECT * FROM contestants ORDER BY score', (e, r) => {
-        if (e) {
-            console.log(e)
-        }
-        console.log(r)
-        process.exit()
+// leaderboard function
+ function leaderboard () {
+ connection.query('SELECT * FROM contestants ORDER BY score', (e, r) => {
+    if (e) {
+        console.log(e)
+    }
+    console.log(r)
+    process.exit()
     })
 }
