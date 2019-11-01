@@ -17,7 +17,7 @@ connection.connect(err => {
 })
 
 function leaderboard () {
-    connection.query('SELECT * FROM contestants ORDER BY score', (e, r, fields) => {
+    connection.query('SELECT * FROM contestants ORDER BY score', (e, r) => {
         if (e) {
             console.log(e)
         }
@@ -37,7 +37,7 @@ function start () {
         if(answer.constumeContest === 'Enter The Contest'){
             enterContest()
         } else if(answer.costumeContest === 'LeaderBoard'){
-            leaderBoard()
+            leaderboard()
         } else if(answer.costumeContest === 'Vote'){
             vote()
         } else {
