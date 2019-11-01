@@ -16,15 +16,6 @@ connection.connect(err => {
 
 })
 
-function leaderboard () {
-    connection.query('SELECT * FROM contestants ORDER BY score', (e, r, fields) => {
-        if (e) {
-            console.log(e)
-        }
-        console.log(r)
-        process.exit()
-    })
-}
 
 function start () {
     inquirer.prompt({
@@ -43,5 +34,14 @@ function start () {
         } else {
             connection.end()
         }
+    })
+}
+ function leaderboard () {
+ connection.query('SELECT * FROM contestants ORDER BY score', (e, r, fields) => {
+    if (e) {
+        console.log(e)
+    }
+    console.log(r)
+    process.exit()
     })
 }
