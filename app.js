@@ -2,9 +2,8 @@ const inquirer = require('inquirer')
 const mysql = require('mysql2')
 
 const connection = 
-mysqul.createConnection({
+mysql.createConnection({
     host: 'localhost',
-    // port: something
     user: 'root',
     password: 'password',
     database: 'costumes_db'
@@ -17,6 +16,15 @@ connection.connect(err => {
 
 })
 
+function leaderboard () {
+    connection.query('SELECT * FROM contestants ORDER BY score', (e, r, fields) => {
+        if (e) {
+            console.log(e)
+        }
+        console.log(r)
+        process.exit()
+    })
+}
 
 function start () {
     inquirer.prompt({
