@@ -5,7 +5,7 @@ const connection =
 mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: 'root',
     database: 'costumes_db'
 })
 
@@ -15,16 +15,6 @@ connection.connect(err => {
   start()
 
 })
-
-function leaderboard () {
-    connection.query('SELECT * FROM contestants ORDER BY score', (e, r) => {
-        if (e) {
-            console.log(e)
-        }
-        console.log(r)
-        process.exit()
-    })
-}
 
 function start () {
     inquirer.prompt({
@@ -43,5 +33,15 @@ function start () {
         } else {
             connection.end()
         }
+    })
+}
+
+function leaderboard () {
+    connection.query('SELECT * FROM contestants ORDER BY score', (e, r) => {
+        if (e) {
+            console.log(e)
+        }
+        console.log(r)
+        process.exit()
     })
 }
