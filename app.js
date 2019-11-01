@@ -16,16 +16,6 @@ connection.connect(err => {
 
 })
 
-function leaderboard() {
-  connection.query('SELECT * FROM contestants ORDER BY score', (e, r, fields) => {
-    if (e) {
-      console.log(e)
-    }
-    console.log(r)
-    process.exit()
-  })
-}
-
 function start() {
   inquirer.prompt({
     name: 'costumeContest',
@@ -63,15 +53,23 @@ const enterContest = () => {
     ])
     .then(answer => {
       connection.query(
-        'INSERT INTO contestants SET ?',
-        {
-          name: answer.name,
-          costume: answer.costume,
-        },
+        'INSERT INTO contestants(name, costume, votes, votedYet) VALUES (?, ?, ?, ?)',
+        [answer.name, answer.costume, 0, 0],
         function (err) {
           if (err) throw err
           console.log('You were successfully entered into the contest!')
           start()
         })
+    })
+    .catch(e => console.log(e))
+}
+
+ function leaderboard () {
+ connection.query('SELECT * FROM contestants ORDER BY score', (e, r, fields) => {
+    if (e) {
+        console.log(e)
     }
-    )
+    console.log(r)
+    process.exit()
+    })
+}
