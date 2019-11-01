@@ -1,30 +1,39 @@
 const inquirer = require('inquirer')
 const mysql = require('mysql2')
 
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'groot',
-  database: 'costumes_db'
+const connection = 
+mysqul.createConnection({
+    host: 'localhost',
+    // port: something
+    user: 'root',
+    password: 'password',
+    database: 'costumes_db'
 })
 
-const votingMenu = _ => {
-  inquirer.prompt({
-    type: 'input',
-    name: 'voter',
-    message: 'What is your name?'
-  })
-    .then(answer => {
-      console.log(answer)
-      db.query('SELECT * FROM contestants ORDER BY votes', (e, data) => {
-        if (e) {
-          console.log(e)
-        }
-        console.log(data)
-      })
+connection.connect(err => {
+    if(err) throw err
 
+  start()
+
+})
+
+
+function start () {
+    inquirer.prompt({
+        name: 'costumeContest',
+        type:'list',
+        message: 'What would you like to do?',
+        choices:['Enter The Contest', 'Vote', 'LeaderBoard', 'EXIT']
     })
-    .catch(e => console.log(e))
+    .then(function (answer) {
+        if(answer.constumeContest === 'Enter The Contest'){
+            enterContest()
+        } else if(answer.costumeContest === 'LeaderBoard'){
+            leaderBoard()
+        } else if(answer.costumeContest === 'Vote'){
+            vote()
+        } else {
+            connection.end()
+        }
+    })
 }
-
-votingMenu()
