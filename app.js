@@ -1,6 +1,8 @@
+// npm packages
 const inquirer = require('inquirer')
 const mysql = require('mysql2')
 
+// connection to database
 const connection =
   mysql.createConnection({
     host: 'localhost',
@@ -9,6 +11,7 @@ const connection =
     database: 'costumes_db'
   })
 
+// creating connection to db and starting in console
 connection.connect(err => {
   if (err) throw err
 
@@ -16,6 +19,7 @@ connection.connect(err => {
 
 })
 
+// start function in console
 function start() {
   inquirer.prompt({
     name: 'costumeContest',
@@ -27,7 +31,7 @@ function start() {
       if (answer.costumeContest === 'Enter The Contest') {
         enterContest()
       } else if (answer.costumeContest === 'LeaderBoard') {
-        leaderBoard()
+        leaderboard()
       } else if (answer.costumeContest === 'Vote') {
         vote()
       } else {
@@ -36,6 +40,7 @@ function start() {
     })
 }
 
+// letting users add their costume to constest
 const enterContest = () => {
   inquirer
     .prompt([
@@ -51,6 +56,7 @@ const enterContest = () => {
         message: 'Input your costume'
       }
     ])
+    // adding users into database
     .then(answer => {
       connection.query(
         'INSERT INTO contestants(name, costume, votes, votedYet) VALUES (?, ?, ?, ?)',
@@ -64,8 +70,9 @@ const enterContest = () => {
     .catch(e => console.log(e))
 }
 
- function leaderboard () {
- connection.query('SELECT * FROM contestants ORDER BY score', (e, r, fields) => {
+// leaderboard function
+function leaderboard() {
+  connection.query('SELECT * FROM contestants ORDER BY votes', (e, r) => {
     if (e) {
       console.log(e)
     }
@@ -74,13 +81,17 @@ const enterContest = () => {
   })
 }
 
-const findVotes = (contestants, name) => {
-  contestants.forEach(e => {
-    if (e.name === name) {
-      return e.votes
-    }
+async function findVotes(contestants, name) {
+  let response = await new Promise((resolve, reject) => {
+    contestants.forEach((e, i, arr) => {
+      if (e.name === name) {
+        resolve(e.votes)
+      }
+    })
+    reject(-1)
   })
-  return -1
+
+  return response
 }
 
 const vote = _ => {
@@ -90,8 +101,7 @@ const vote = _ => {
     message: 'What is your name?'
   })
     .then(answer => {
-      console.log(answer)
-      db.query('SELECT * FROM contestants ORDER BY votes', (e, data) => {
+      connection.query('SELECT * FROM contestants ORDER BY votes', (e, data) => {
         if (e) {
           console.log(e)
         }
@@ -111,14 +121,24 @@ const vote = _ => {
               message: 'Who do you want to vote for?',
               choices: names
             })
-              .then(answer => {
-                const votes = findVotes(data, answer.name)
-                connection.query('UPDATE contestants SET votes = ? WHERE name = ?', [ votes+1, answer.name], (e, data) => {
-                  if (e) {
-                    console.log(e)
-                  }
-                  console.log(data)
-                })
+              .then(answer_name => {
+                findVotes(data, answer_name.name)
+                  .then(votes => {
+                    connection.query('UPDATE contestants SET votes = ? WHERE name = ?', [votes + 1, answer_name.name], (e, data) => {
+                      if (e) {
+                        console.log(e)
+                      }
+                      connection.query('UPDATE contestants SET votedYet = ? WHERE name = ?', [1, answer.voter]), (e, data) => {
+                        if (e) {
+                          console.log(e)
+                        }
+                      }
+                      console.log('Thank you for voting!')
+                      start()
+                    })
+                  })
+                  .catch(e => console.log(e))
+
               })
               .catch(e => console.log(e))
           }
