@@ -1,14 +1,17 @@
+// npm packages
 const inquirer = require('inquirer')
 const mysql = require('mysql2')
 
+// connection to database
 const connection =
   mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'password',
+    password: 'root',
     database: 'costumes_db'
   })
 
+// creating connection to db and starting in console
 connection.connect(err => {
   if (err) throw err
 
@@ -16,6 +19,7 @@ connection.connect(err => {
 
 })
 
+// start function in console
 function start() {
   inquirer.prompt({
     name: 'costumeContest',
@@ -27,7 +31,7 @@ function start() {
       if (answer.constumeContest === 'Enter The Contest') {
         enterContest()
       } else if (answer.costumeContest === 'LeaderBoard') {
-        leaderBoard()
+        leaderboard()
       } else if (answer.costumeContest === 'Vote') {
         vote()
       } else {
@@ -36,6 +40,7 @@ function start() {
     })
 }
 
+// letting users add their costume to constest
 const enterContest = () => {
   inquirer
     .prompt([
@@ -51,6 +56,7 @@ const enterContest = () => {
         message: 'Input your costume'
       }
     ])
+    // adding users into database
     .then(answer => {
       connection.query(
         'INSERT INTO contestants(name, costume, votes, votedYet) VALUES (?, ?, ?, ?)',
@@ -64,12 +70,13 @@ const enterContest = () => {
     .catch(e => console.log(e))
 }
 
- function leaderboard () {
- connection.query('SELECT * FROM contestants ORDER BY score', (e, r, fields) => {
-    if (e) {
-        console.log(e)
-    }
-    console.log(r)
-    process.exit()
+// leaderboard function
+function leaderboard () {
+    connection.query('SELECT * FROM contestants ORDER BY score', (e, r) => {
+        if (e) {
+            console.log(e)
+        }
+            console.log(r)
+            process.exit()
     })
 }
