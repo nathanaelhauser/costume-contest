@@ -46,7 +46,7 @@ function start() {
     })
 }
 
-const enterConterst = () => {
+const enterContest = () => {
   inquirer
     .prompt([
       {
